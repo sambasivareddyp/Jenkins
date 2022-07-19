@@ -1,0 +1,102 @@
+HOW TO CREATE JAVA PATH 
+-----------------------
+ 
+sudo alrenatives --config java
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.332.b09-2.el8_6.x86_64/jre/bin/java
+ 
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.332.b09-2.el8_6.x86_64
+export JRE_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.332.b09-2.el8_6.x86_64/jre
+export PATH=$PATH:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.332.b09-2.el8_6.x86_64/bin:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.332.b09-2.el8_6.x86_64/jre/bin
+cd /etc/profile.d/    ----->vi java.sh (copy 3steps ) 
+chmod +x java.sh
+source java.sh
+echo $JAVA_HOME
+ 
+ 
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.332.b09-2.el8_6.x86_64
+ 
+CREATE NEW INSTANCE --T2 LARGE  ----SECURITY ALL TCP - ANYWHERE
+ 
+CHANGE ROOT USER
+----------------
+sudo su -
+cd /opt/
+ 
+                 JAVA INSTALL
+
+yum install wget -y
+wget -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm
+yum install jdk-8u131-linux-x64.rpm -y
+ 
+git install --------- yum install git -y
+maven install ------- yum install maven -y
+ 
+ 
+               JENKINS INSTALL 
+ 
+wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+yum install jenkins -y
+ 
+systemctl enable jenkins
+systemctl start jenkins
+systemctl status jenkins
+ 
+                   TOMCAT INSTALL
+ 
+yum install tar wget -y
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.64/bin/apache-tomcat-9.0.64.tar.gz
+tar -zxvf apache-tomcat-9.0.64.tar.gz
+ 
+mv apache-tomcat-9.0.64 tomcat
+vi /opt/tomcat/webapps/manager/META-INF/context.ml       --->     <!--   -->
+vi /opt/tomcat/webapps/host-manager/META-INF/context.ml   --->      <!--     -->
+vi /opt/tomcat/conf/tomcat-user.xml  ---> <user username="samba" password="123123" roles="manager-gui,admin-gui,manager-script"/>
+vi /opt/tomcat/conf/server.xml ----> change port number
+sh /opt/tomcat/bin/startup.sh
+ 
+                 SONARQUBE INSTALL 
+ 
+yum install wget unzip -y
+wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.8.zip
+unzip sonarqube-7.8.zip 
+useradd sonar
+visudo ---->  sonar   ALL=(ALL)       NOPASSWD: ALL
+chown -R sonar:sonar /opt/sonarqube-7.8/
+chmod -R 775 /opt/sonarqube-7.8/
+su - sonar
+cd /opt/sonarqube-7.8/bin/linux-x86-64/
+sh sonar.sh start
+sh sonar.sh status
+ 
+                         NEXUS INSTALL
+ 
+yum install tar wget -y
+wget https://download.sonatype.com/nexus/3/nexus-3.40.1-01-unix.tar.gz
+tar -zxvf nexus-3.40.1-01-unix.tar.gz
+mv nexus-3.40.1-01-unix.tar.gz
+useradd nexus
+visudo     -----> nexus  ALL=(ALL)     NOPASSWORD: ALL
+chown -R nexus:nexus /opt/nexus
+chown -R nexus:nexus /opt/sonatype-work
+chmod -R 775 /opt/nexus
+chmod -R 775 /opt/sonatype-work
+vi nexus/bin/nexus.rc       "nexus"
+ln -s /opt/nexus/bin/nexus /etc/init.d/nexus
+su - nexus
+sudo systemctl enable nexus
+sudo systemctl start nexus
+sudo systemctl status nexus
+ 
+ 
+ 
+                      JENKINS START NOW
+  
+  INSTALL PLUGINGS ALL
+  CREATE USER NAME AND PASSWORD, EMAIL
+  DASH BOARD -- MANAGE JENKINS --- MANAGE PLUGINGS
+  AVAILBLE -- DEPLOY TO CONTAINER  go back to 	DASH BOARD  
+ 
+
+
+
